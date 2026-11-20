@@ -114,13 +114,14 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
         with:
-          packages: platform-tools
+          packages: |
+            platform-tools
+            platforms;android-36
+            build-tools;36.0.0
+            cmake;3.22.1
 
       - name: Accept Licenses
         run: yes | sdkmanager --licenses
-
-      - name: Install Build Tools 35.0.0
-        run: sdkmanager "build-tools;35.0.0"
 
       - name: Verify installed SDK Packages
         run: sdkmanager --list
@@ -150,16 +151,15 @@ jobs:
         if: env.HAS_GOOGLE_SERVICES == 'true'
         run: ./gradlew assembleDebug assembleBeta assembleRelease
 
-      - name: Compile Debug Without Firebase Secrets
+      - name: Assemble Debug Without Firebase Secrets
         if: env.HAS_GOOGLE_SERVICES == 'false'
-        run: ./gradlew :app:compileDebugKotlin :app:compileDebugJavaWithJavac
+        run: ./gradlew :app:assembleDebug
 
       - name: App Unit Tests
         if: env.HAS_GOOGLE_SERVICES == 'true'
         run: ./gradlew :app:testDebugUnitTest
 
       - name: Upload Debug APK
-        if: env.HAS_GOOGLE_SERVICES == 'true'
         uses: actions/upload-artifact@v4.6.2
         with:
           name: LeviLauncher-debug-apk
