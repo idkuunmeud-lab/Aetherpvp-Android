@@ -25,6 +25,16 @@ Important limitations found:
 2. The workflow does not explicitly install Android SDK Platform 36, even though the app uses `compileSdkVersion 36`. It installs Build Tools 35.0.0. The SDK package setup should be made explicit before treating CI as a reliable full-build gate.
 3. No successful or failed Actions run is available for this branch at the time of this review.
 
+## CI hardening applied after review
+
+The workflow was updated in a follow-up commit:
+
+- Explicitly installs Android SDK Platform 36, Build Tools 36.0.0, and CMake 3.22.1.
+- When Firebase secrets are absent, CI now runs `:app:assembleDebug` rather than stopping after Java/Kotlin compilation.
+- Debug APK artifact upload is no longer restricted to the Firebase-secrets path.
+
+This makes the no-secrets path attempt a complete debug APK build, including native build tasks. It is still unverified until GitHub Actions actually runs successfully.
+
 ## Required next validation
 
 Before adding gameplay modules:
