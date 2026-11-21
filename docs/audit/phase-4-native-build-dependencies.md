@@ -46,3 +46,8 @@ At the time of this report, GitHub reports zero workflow runs and zero check run
 ## Next gate
 
 Enable/run the workflow and inspect its first failure, if any. Fix only evidenced failures. Do not add gameplay hooks or version-specific game offsets until the baseline APK assembles and the diagnostic module is validated on-device.
+
+
+## CI follow-up
+
+The Android SDK setup input is space-delimited by `android-actions/setup-android@v3`; the workflow now supplies the SDK package identifiers as a single space-delimited value. A fresh push-triggered run is required to test commit `9a66b537d740be357ec75b9344ae9cddab614407`; retrying the earlier run reuses its original workflow commit.
