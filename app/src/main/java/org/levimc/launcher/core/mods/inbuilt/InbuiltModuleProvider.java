@@ -72,6 +72,9 @@ public final class InbuiltModuleProvider {
         mods.add(create(activity, manager, overlayManager, ModIds.ZOOM,
                 R.string.inbuilt_mod_zoom, R.string.inbuilt_mod_zoom_desc,
                 groupName));
+        mods.add(create(activity, manager, overlayManager, ModIds.AETHER_CROSSHAIR,
+                R.string.inbuilt_mod_aether_crosshair, R.string.inbuilt_mod_aether_crosshair_desc,
+                groupName));
         mods.add(create(activity, manager, overlayManager, ModIds.FPS_DISPLAY,
                 R.string.inbuilt_mod_fps_display, R.string.inbuilt_mod_fps_display_desc,
                 groupName));
