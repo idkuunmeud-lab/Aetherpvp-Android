@@ -15,6 +15,8 @@ public final class AetherCrosshairOverlay {
     private final Activity activity;
     private final WindowManager windowManager;
     private View view;
+    private boolean enabled;
+    private boolean gameplayVisible = true;
 
     public AetherCrosshairOverlay(Activity activity) {
         this.activity = activity;
@@ -22,6 +24,20 @@ public final class AetherCrosshairOverlay {
     }
 
     public void show() {
+        enabled = true;
+        updateVisibility();
+    }
+
+    public void setGameplayVisible(boolean visible) {
+        gameplayVisible = visible;
+        updateVisibility();
+    }
+
+    private void updateVisibility() {
+        if (!enabled || !gameplayVisible) {
+            removeView();
+            return;
+        }
         if (view != null || activity.isFinishing() || activity.isDestroyed()) return;
         final float density = activity.getResources().getDisplayMetrics().density;
         view = new CrosshairView(activity);
@@ -44,6 +60,11 @@ public final class AetherCrosshairOverlay {
     }
 
     public void hide() {
+        enabled = false;
+        removeView();
+    }
+
+    private void removeView() {
         if (view == null) return;
         try {
             windowManager.removeView(view);
