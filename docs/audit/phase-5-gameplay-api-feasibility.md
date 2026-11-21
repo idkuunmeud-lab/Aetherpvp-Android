@@ -2,7 +2,7 @@
 
 Date: 2026-11-21
 Repository branch: `main`
-User-reported Minecraft Bedrock version: `1.26.62.1`
+User-reported Minecraft Bedrock version: `1.26.66.1` (confirmed by the user's Android App info screenshot)
 
 ## Purpose
 
@@ -10,9 +10,9 @@ Establish what the current LeviLauncher/Preloader integration can safely support
 
 ## Target build assessment
 
-The checked-in Preloader signature rules include a first rule with minimum version `1.26.60.00` and no maximum version. The Preloader's version comparator parses numeric components, so the reported `1.26.62.1` satisfies that minimum and will select that rule.
+The checked-in Preloader signature rules include a first rule with minimum version `1.26.60.00` and no maximum version. The Preloader's version comparator parses numeric components, so the reported `1.26.66.1` satisfies that minimum and will select that rule.
 
-Important limitation: this only means the rule is selected by version comparison. It does **not** prove that its signatures resolve correctly against the user's exact `1.26.62.1` `libminecraftpe.so` binary. That still requires runtime validation on the exact build. The currently bundled signatures cover pause-menu/HUD screen lifecycle and menu visibility, not player or inventory state.
+Important limitation: this only means the rule is selected by version comparison. It does **not** prove that its signatures resolve correctly against the user's exact `1.26.66.1` `libminecraftpe.so` binary. That still requires runtime validation on the exact build. The currently bundled signatures cover pause-menu/HUD screen lifecycle and menu visibility, not player or inventory state.
 
 ## Confirmed integration points
 
@@ -48,7 +48,7 @@ Do not implement automated attacks against other players, reach/damage manipulat
 ## Required verification before a gameplay module is marked complete
 
 - Confirm exact Minecraft build and ABI.
-- Validate the selected Preloader signatures against the exact `1.26.62.1` binary.
+- Validate the selected Preloader signatures against the exact `1.26.66.1` binary.
 - Identify the actual class/function/data source from matching symbols or verified signatures.
 - Confirm lifecycle/thread requirements and null/disconnect behavior.
 - Add version-gated handling and fail closed when unsupported.
@@ -57,7 +57,7 @@ Do not implement automated attacks against other players, reach/damage manipulat
 
 ## Current result
 
-The existing native integration is a viable extension point. The current version rules select a menu/HUD lifecycle signature set for `1.26.62.1`, but exact-build signature resolution is not yet verified. The checked-in API and signature rules remain insufficient to truthfully claim working armor, potion, target, or entity tracking. Further reverse-engineering/verification is required before those modules can be implemented responsibly.
+The existing native integration is a viable extension point. The current version rules select a menu/HUD lifecycle signature set for `1.26.66.1`, but exact-build signature resolution is not yet verified. The checked-in API and signature rules remain insufficient to truthfully claim working armor, potion, target, or entity tracking. Further reverse-engineering/verification is required before those modules can be implemented responsibly.
 
 ## Follow-up: official Android modding API clarification
 
@@ -76,6 +76,6 @@ This confirms that directly including LeviLamina's desktop `Player.h`, `Inventor
 
 ### Consequence for AetherPvP
 
-Do not attempt an armor/effect HUD by importing desktop LeviLamina headers or by reading guessed object offsets. The next legitimate technical milestone is a **read-only, exact-build probe**: identify one low-risk local-player accessor in the Android Minecraft binary, validate its signature and calling convention on 1.26.62.1, and expose only a guarded read-only result to the module layer. If no reliable accessor can be verified, stop and report the blocker rather than ship fabricated data.
+Do not attempt an armor/effect HUD by importing desktop LeviLamina headers or by reading guessed object offsets. The next legitimate technical milestone is a **read-only, exact-build probe**: identify one low-risk local-player accessor in the Android Minecraft binary, validate its signature and calling convention on 1.26.66.1, and expose only a guarded read-only result to the module layer. If no reliable accessor can be verified, stop and report the blocker rather than ship fabricated data.
 
 This follow-up is documentation/source research only. It does not claim that any gameplay accessor has been discovered or tested on-device.
