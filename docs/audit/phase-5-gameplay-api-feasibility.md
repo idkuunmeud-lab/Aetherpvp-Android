@@ -58,3 +58,24 @@ Do not implement automated attacks against other players, reach/damage manipulat
 ## Current result
 
 The existing native integration is a viable extension point. The current version rules select a menu/HUD lifecycle signature set for `1.26.62.1`, but exact-build signature resolution is not yet verified. The checked-in API and signature rules remain insufficient to truthfully claim working armor, potion, target, or entity tracking. Further reverse-engineering/verification is required before those modules can be implemented responsibly.
+
+## Follow-up: official Android modding API clarification
+
+A current LeviMC FAQ explicitly distinguishes the Android Preloader SDK from LeviLamina's desktop/server API:
+
+- Android native mods use the separate `pl::` API.
+- The Android SDK does **not** provide LeviLamina's game class headers or its player/entity event API.
+- Android mods must locate game functions themselves through signatures/symbols and hook them.
+
+References:
+- [LeviLauncher Android API FAQ](https://levimc.org/faq/play/android/usage/)
+- [Android native mod API](https://levimc.org/LeviLamina/developer_guides/android/api/mod/)
+- [Android native mod tutorial](https://levimc.org/tutorials/develop/first-android-mod/)
+
+This confirms that directly including LeviLamina's desktop `Player.h`, `Inventory.h`, or effect APIs in this Android app is not a valid shortcut. The desktop API documents useful conceptual game types, but they are not supplied as an Android ABI by this launcher SDK.
+
+### Consequence for AetherPvP
+
+Do not attempt an armor/effect HUD by importing desktop LeviLamina headers or by reading guessed object offsets. The next legitimate technical milestone is a **read-only, exact-build probe**: identify one low-risk local-player accessor in the Android Minecraft binary, validate its signature and calling convention on 1.26.62.1, and expose only a guarded read-only result to the module layer. If no reliable accessor can be verified, stop and report the blocker rather than ship fabricated data.
+
+This follow-up is documentation/source research only. It does not claim that any gameplay accessor has been discovered or tested on-device.
