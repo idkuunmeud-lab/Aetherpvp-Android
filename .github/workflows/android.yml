@@ -34,32 +34,6 @@ jobs:
           fetch-depth: 0
           submodules: "recursive"
 
-      - name: Download Discord Social SDK
-        env:
-          GH_TOKEN: ${{ secrets.DISCORD_SDK_TOKEN }}
-          DISCORD_SDK_REPOSITORY: ${{ vars.DISCORD_SDK_REPOSITORY }}
-        run: |
-          set -euo pipefail
-
-          if [ -z "${GH_TOKEN:-}" ] || [ -z "${DISCORD_SDK_REPOSITORY:-}" ]; then
-            echo "::error::Configure the DISCORD_SDK_REPOSITORY Actions variable and DISCORD_SDK_TOKEN Actions secret."
-            exit 1
-          fi
-
-          mkdir -p app/libs
-          gh release download 'discord-sdk-1.10.19337' \
-            --repo "$DISCORD_SDK_REPOSITORY" \
-            --pattern 'discord_partner_sdk.aar' \
-            --dir app/libs \
-            --clobber
-
-          if ! printf '%s  %s\n' \
-            'b1b2491f1e1848c79fd6f1986d5aa1e0c8019e88a6e62c7be06b89e8e4870933' \
-            'app/libs/discord_partner_sdk.aar' | sha256sum --check --status; then
-            echo "::error::The Discord SDK AAR does not match the pinned 1.10.19337 build."
-            exit 1
-          fi
-
       - name: Prepare google-services.json
         env:
           GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
@@ -140,13 +114,10 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
         with:
-          packages: platform-tools
+          packages: "platform-tools platforms;android-36 build-tools;35.0.0 build-tools;36.0.0 cmake;3.22.1"
 
       - name: Accept Licenses
         run: yes | sdkmanager --licenses
-
-      - name: Install Build Tools 35.0.0
-        run: sdkmanager "build-tools;35.0.0"
 
       - name: Verify installed SDK Packages
         run: sdkmanager --list
@@ -176,16 +147,15 @@ jobs:
         if: env.HAS_GOOGLE_SERVICES == 'true'
         run: ./gradlew assembleDebug assembleBeta assembleRelease
 
-      - name: Compile Debug Without Firebase Secrets
+      - name: Assemble Debug Without Firebase Secrets
         if: env.HAS_GOOGLE_SERVICES == 'false'
-        run: ./gradlew :app:compileDebugKotlin :app:compileDebugJavaWithJavac
+        run: ./gradlew :app:assembleDebug
 
       - name: App Unit Tests
         if: env.HAS_GOOGLE_SERVICES == 'true'
         run: ./gradlew :app:testDebugUnitTest
 
       - name: Upload Debug APK
-        if: env.HAS_GOOGLE_SERVICES == 'true'
         uses: actions/upload-artifact@v4.6.2
         with:
           name: LeviLauncher-debug-apk
@@ -258,38 +228,3 @@ jobs:
           body_path: release-notes.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Notify Discord
-        if: env.HAS_GOOGLE_SERVICES == 'true' && startsWith(github.ref, 'refs/tags/')
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-          APK_URL: "https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/LeviLauncher-${{ github.ref_name }}-release.apk"
-          TAG_NAME: ${{ github.ref_name }}
-        run: |
-          EMBED_TITLE="🚀 LeviLauncher Update!"
-          EMBED_DESC="A new version of **LeviLauncher for Android** is ready."
-          EMBED_COLOR=5814783
-          THUMB_URL='https://avatars.githubusercontent.com/u/78095377?s=200&v=4'
-
-          curl -H "Content-Type: application/json" \
-          -d "{
-            \"embeds\": [{
-              \"title\": \"$EMBED_TITLE\",
-              \"description\": \"$EMBED_DESC\",
-              \"color\": $EMBED_COLOR,
-              \"thumbnail\": { \"url\": \"$THUMB_URL\" },
-              \"fields\": [
-                {
-                  \"name\": \"📦 Version\",
-                  \"value\": \"\`$TAG_NAME\`\",
-                  \"inline\": true
-                },
-                {
-                  \"name\": \"🔗 Download\",
-                  \"value\": \"[**Click here to download APK**]($APK_URL)\",
-                  \"inline\": true
-                }
-              ]
-            }]
-          }" \
-          "$DISCORD_WEBHOOK"

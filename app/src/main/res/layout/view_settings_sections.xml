@@ -45,27 +45,6 @@
                             android:layout_height="wrap_content"
                             android:text="@string/settings_ui_change" />
                     </LinearLayout>
-                    <View
-                        style="@style/settings_Divider" />
-                    <LinearLayout
-                        style="@style/settings_Row">
-
-                        <LinearLayout
-                            style="@style/settings_RowText">
-
-                            <TextView
-                                style="@style/settings_RowTitle"
-                                android:text="@string/discord_rich_presence" />
-                            <TextView
-                                style="@style/settings_RowDesc"
-                                android:text="@string/discord_rich_presence_desc" />
-                        </LinearLayout>
-                        <com.google.android.material.switchmaterial.SwitchMaterial
-                            android:id="@+id/switch_discord_presence"
-                            style="@style/settings_Switch" />
-                    </LinearLayout>
-                    <View
-                        style="@style/settings_Divider" />
                     <LinearLayout
                         style="@style/settings_Row">
 
