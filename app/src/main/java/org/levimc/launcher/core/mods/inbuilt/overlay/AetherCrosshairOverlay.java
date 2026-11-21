@@ -1,6 +1,7 @@
 package org.levimc.launcher.core.mods.inbuilt.overlay;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -23,7 +24,7 @@ public final class AetherCrosshairOverlay {
     public void show() {
         if (view != null || activity.isFinishing() || activity.isDestroyed()) return;
         final float density = activity.getResources().getDisplayMetrics().density;
-        view = new CrosshairView();
+        view = new CrosshairView(activity);
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 Math.round(40 * density), Math.round(40 * density),
                 WindowManager.LayoutParams.TYPE_APPLICATION_PANEL,
@@ -56,8 +57,8 @@ public final class AetherCrosshairOverlay {
         private final Paint outline = new Paint(Paint.ANTI_ALIAS_FLAG);
         private final Paint accent = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-        CrosshairView() {
-            super(null);
+        CrosshairView(Context context) {
+            super(context);
             outline.setColor(Color.BLACK);
             outline.setStrokeWidth(4.5f);
             outline.setStrokeCap(Paint.Cap.SQUARE);
