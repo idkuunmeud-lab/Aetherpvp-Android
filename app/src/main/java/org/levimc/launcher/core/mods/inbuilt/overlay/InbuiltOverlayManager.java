@@ -767,6 +767,10 @@ public class InbuiltOverlayManager {
             cpsDisplayOverlay.hide();
             cpsDisplayOverlay = null;
         }
+        if (aetherCrosshairOverlay != null) {
+            aetherCrosshairOverlay.hide();
+            aetherCrosshairOverlay = null;
+        }
         if (snaplookOverlay != null) {
             snaplookOverlay.hide();
             snaplookOverlay = null;
@@ -1171,6 +1175,7 @@ public class InbuiltOverlayManager {
         if (chickPetOverlay != null) chickPetOverlay.setRuntimeActive(active);
         if (gyroOverlay != null) gyroOverlay.setRuntimeActive(active);
         if (!active) {
+            if (aetherCrosshairOverlay != null) aetherCrosshairOverlay.setGameplayVisible(false);
             runtimeHandler.removeCallbacks(runtimeUpdate);
             runtimeUpdateQueued.set(false);
             releaseKeybinds();
@@ -1192,6 +1197,9 @@ public class InbuiltOverlayManager {
         boolean hideLauncherOverlays = launcherHudHidden && manager.isLauncherHudHideEnabled();
         if (!showGameOverlays && hasPressedKeybinds) activity.runOnUiThread(this::releaseKeybinds);
         boolean inbuiltVisible = hudEditorMode || showGameOverlays;
+        if (aetherCrosshairOverlay != null) {
+            aetherCrosshairOverlay.setGameplayVisible(inbuiltVisible && !hideLauncherOverlays);
+        }
         int hotbarGameplayState = hotbarSlotOverlayMap.isEmpty() ? -1 : HotbarSlotMod.getGameplayVisibilityState();
         boolean hotbarGameplayVisible = hotbarGameplayState >= 0
                 ? hotbarGameplayState == 1 : showGameOverlays;
