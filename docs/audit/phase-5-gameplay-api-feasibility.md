@@ -2,10 +2,17 @@
 
 Date: 2026-11-21
 Repository branch: `main`
+User-reported Minecraft Bedrock version: `1.26.62.1`
 
 ## Purpose
 
 Establish what the current LeviLauncher/Preloader integration can safely support before implementing substantial AetherPvP gameplay modules. This is a source-level audit, not a claim of in-game verification.
+
+## Target build assessment
+
+The checked-in Preloader signature rules include a first rule with minimum version `1.26.60.00` and no maximum version. The Preloader's version comparator parses numeric components, so the reported `1.26.62.1` satisfies that minimum and will select that rule.
+
+Important limitation: this only means the rule is selected by version comparison. It does **not** prove that its signatures resolve correctly against the user's exact `1.26.62.1` `libminecraftpe.so` binary. That still requires runtime validation on the exact build. The currently bundled signatures cover pause-menu/HUD screen lifecycle and menu visibility, not player or inventory state.
 
 ## Confirmed integration points
 
@@ -41,6 +48,7 @@ Do not implement automated attacks against other players, reach/damage manipulat
 ## Required verification before a gameplay module is marked complete
 
 - Confirm exact Minecraft build and ABI.
+- Validate the selected Preloader signatures against the exact `1.26.62.1` binary.
 - Identify the actual class/function/data source from matching symbols or verified signatures.
 - Confirm lifecycle/thread requirements and null/disconnect behavior.
 - Add version-gated handling and fail closed when unsupported.
@@ -49,4 +57,4 @@ Do not implement automated attacks against other players, reach/damage manipulat
 
 ## Current result
 
-The existing native integration is a viable extension point, but the current checked-in API and signature rules are insufficient to truthfully claim working armor, potion, target, or entity tracking. Further reverse-engineering/verification is required before those modules can be implemented responsibly.
+The existing native integration is a viable extension point. The current version rules select a menu/HUD lifecycle signature set for `1.26.62.1`, but exact-build signature resolution is not yet verified. The checked-in API and signature rules remain insufficient to truthfully claim working armor, potion, target, or entity tracking. Further reverse-engineering/verification is required before those modules can be implemented responsibly.
