@@ -55,6 +55,7 @@ public class InbuiltOverlayManager {
     private GyroOverlay gyroOverlay;
     private FpsDisplayOverlay fpsDisplayOverlay;
     private CpsDisplayOverlay cpsDisplayOverlay;
+    private AetherCrosshairOverlay aetherCrosshairOverlay;
     private ModMenuButton modMenuButton;
     private ModMenuOverlay modMenuOverlay;
     private boolean modMenuOpenedFromButton;
@@ -178,6 +179,7 @@ public class InbuiltOverlayManager {
         modActiveStates.put(ModIds.AUTO_SPRINT, false);
         modActiveStates.put(ModIds.CHICK_PET, false);
         modActiveStates.put(ModIds.ZOOM, false);
+        modActiveStates.put(ModIds.AETHER_CROSSHAIR, false);
         modActiveStates.put(ModIds.FPS_DISPLAY, false);
         modActiveStates.put(ModIds.CPS_DISPLAY, false);
         modActiveStates.put(ModIds.SNAPLOOK, false);
@@ -214,6 +216,7 @@ public class InbuiltOverlayManager {
         restorePersistedInbuiltModState(manager, ModIds.AUTO_SPRINT);
         restorePersistedInbuiltModState(manager, ModIds.CHICK_PET);
         restorePersistedInbuiltModState(manager, ModIds.ZOOM);
+        restorePersistedInbuiltModState(manager, ModIds.AETHER_CROSSHAIR);
         restorePersistedInbuiltModState(manager, ModIds.FPS_DISPLAY);
         restorePersistedInbuiltModState(manager, ModIds.CPS_DISPLAY);
         restorePersistedInbuiltModState(manager, ModIds.SNAPLOOK);
@@ -339,6 +342,10 @@ public class InbuiltOverlayManager {
                 overlays.add(zoomOverlay);
                 modOverlayMap.put(modId, zoomOverlay);
                 break;
+            case ModIds.AETHER_CROSSHAIR:
+                if (aetherCrosshairOverlay == null) aetherCrosshairOverlay = new AetherCrosshairOverlay(activity);
+                aetherCrosshairOverlay.show();
+                break;
             case ModIds.FPS_DISPLAY:
                 if (fpsDisplayOverlay == null) {
                     fpsDisplayOverlay = new FpsDisplayOverlay(activity);
@@ -415,6 +422,14 @@ public class InbuiltOverlayManager {
                 zoomOverlay.hide();
                 overlays.remove(zoomOverlay);
                 modOverlayMap.remove(modId);
+            }
+            return;
+        }
+
+        if (modId.equals(ModIds.AETHER_CROSSHAIR)) {
+            if (aetherCrosshairOverlay != null) {
+                aetherCrosshairOverlay.hide();
+                aetherCrosshairOverlay = null;
             }
             return;
         }
